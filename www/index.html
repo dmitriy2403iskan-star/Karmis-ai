@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="en" data-accent="cyan" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#06080d">
+<title>Кармис AI</title>
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="style.css">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#06080d">
+<link rel="apple-touch-icon" href="icon-192.png">
+</head>
+<body data-state="idle">
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="6.5" height="6.5" rx="1.6"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.6"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.6"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.6"/></symbol>
+  <symbol id="i-music" viewBox="0 0 24 24"><path d="M9 18V6l10-2v12"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="16" r="2"/></symbol>
+  <symbol id="i-note" viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M9 11h7M9 15h7"/></symbol>
+  <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 7h8M18 7h2M4 17h2M12 17h8"/><circle cx="15" cy="7" r="2.2"/><circle cx="9" cy="17" r="2.2"/></symbol>
+  <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24"><path d="M4 12L20 4l-6 16-3-6.5z"/></symbol>
+  <symbol id="i-stop" viewBox="0 0 24 24"><rect x="6.5" y="6.5" width="11" height="11" rx="2.5"/></symbol>
+  <symbol id="i-vol" viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></symbol>
+  <symbol id="i-mute" viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M17 9l5 6M22 9l-5 6"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M5 7h14M10 7V4h4v3M7 7l1 13h8l1-13"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-ear" viewBox="0 0 24 24"><path d="M7 9a5 5 0 0 1 10 0c0 2.6-2 3.4-3 5.2-.8 1.4-.4 3.3-2.3 3.8-1.6.4-3-.7-3-2.2"/><path d="M10 9.2a2 2 0 0 1 4 0"/></symbol>
+  <symbol id="i-mini" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><rect x="12" y="11" width="7" height="6" rx="1.5"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+</svg>
+
+<div class="app">
+
+  <nav class="nav">
+    <div class="brand"><div class="orb orb-xs"></div><span>Кармис <b>AI</b></span></div>
+    <button class="nav-btn active" data-view="chat"><svg class="ic"><use href="#i-chat"/></svg><span data-i18n="nav.chat">Чат</span></button>
+    <button class="nav-btn" data-view="tools"><svg class="ic"><use href="#i-grid"/></svg><span data-i18n="nav.tools">Функции</span></button>
+    <button class="nav-btn" data-view="corner"><svg class="ic"><use href="#i-music"/></svg><span data-i18n="nav.corner">Куточок</span></button>
+    <button class="nav-btn" data-view="organizer"><svg class="ic"><use href="#i-note"/></svg><span data-i18n="nav.organizer">Органайзер</span></button>
+    <button class="nav-btn" data-view="settings"><svg class="ic"><use href="#i-sliders"/></svg><span data-i18n="nav.settings">Настройки</span></button>
+    <div class="nav-foot"><div class="chip" id="providerChip" data-i18n="chip.nokey">нет ключа</div></div>
+  </nav>
+
+  <main class="stage">
+
+    <!-- ЧАТ -->
+    <section class="view active" id="view-chat">
+      <header class="topbar">
+        <div class="orb orb-sm" id="miniOrb" title="Нажми, чтобы остановить" data-i18n-title="top.orb"></div>
+        <div class="who"><div class="title">Кармис</div><div class="status" id="statusText">Готов</div><div class="live" id="liveText" hidden></div></div>
+        <div class="spacer"></div>
+        <button class="icon-btn" id="btnMini" title="Міні-вікно" data-i18n-title="mini.open"><svg class="ic"><use href="#i-mini"/></svg></button>
+        <button class="icon-btn" id="btnEar" title="Постоянное прослушивание" data-i18n-title="top.ear" aria-pressed="false"><svg class="ic"><use href="#i-ear"/></svg></button>
+        <button class="icon-btn" id="btnMute" title="Озвучка ответов" data-i18n-title="top.mute"><svg class="ic"><use href="#i-vol"/></svg></button>
+        <button class="icon-btn" id="btnClear" title="Очистить чат" data-i18n-title="top.clear"><svg class="ic"><use href="#i-trash"/></svg></button>
+      </header>
+
+      <div class="messages" id="messages">
+        <div class="hero" id="hero">
+          <div class="orb orb-lg" id="heroOrb"></div>
+          <h1>Привет, <span id="heroName">я Кармис</span></h1>
+          <p>Твой личный ИИ-ассистент на твоих API-ключах. Пиши или говори — я открою сайты, найду маршрут, скажу погоду, поставлю таймер и многое другое.</p>
+          <div class="suggest" id="suggest"></div>
+        </div>
+      </div>
+
+      <div class="composer">
+        <div class="chips" id="chips"></div>
+        <form id="form" autocomplete="off">
+          <button type="button" class="round" id="btnMic" title="Голосовой ввод" data-i18n-title="chat.mic"><svg class="ic"><use href="#i-mic"/></svg></button>
+          <textarea id="input" rows="1" placeholder="Напиши или скажи что-нибудь…" data-i18n-ph="chat.ph" enterkeyhint="send"></textarea>
+          <button type="submit" class="round primary" id="btnSend" title="Отправить" data-i18n-title="chat.send"><svg class="ic"><use href="#i-send"/></svg></button>
+        </form>
+      </div>
+    </section>
+
+    <!-- ФУНКЦИИ -->
+    <section class="view" id="view-tools">
+      <header class="page-head"><h2 data-i18n="tools.h">Что умеет Кармис</h2><p data-i18n="tools.p">Нажми «Попробовать» — команда сразу уйдёт в чат. Можно говорить своими словами, Кармис сам поймёт.</p></header>
+      <div class="catalog" id="catalog"></div>
+    </section>
+
+    <!-- КУТОЧОК -->
+    <section class="view" id="view-corner">
+      <header class="page-head"><h2 data-i18n="corner.h">Мій куточок</h2><p data-i18n="corner.p"></p></header>
+      <div id="cornerBody" class="corner"></div>
+    </section>
+
+    <!-- ОРГАНАЙЗЕР -->
+    <section class="view" id="view-organizer">
+      <header class="page-head"><h2 data-i18n="org.h">Органайзер</h2><p data-i18n="org.p">Таймеры и заметки, которые Кармис создаёт по твоим командам.</p></header>
+      <div class="two-col">
+        <div class="panel">
+          <h3 data-i18n="org.timers">Таймеры</h3>
+          <div class="row wrap">
+            <button class="btn ghost sm" data-timer="60"></button>
+            <button class="btn ghost sm" data-timer="300"></button>
+            <button class="btn ghost sm" data-timer="600"></button>
+            <button class="btn ghost sm" data-timer="1800"></button>
+          </div>
+          <div id="timerList" class="list"></div>
+          <p class="hint" data-i18n="org.timerHint">Таймеры срабатывают, пока приложение открыто.</p>
+        </div>
+        <div class="panel">
+          <h3 data-i18n="org.notes">Заметки</h3>
+          <form class="row" id="noteForm">
+            <input class="field" id="noteInput" placeholder="Новая заметка…" data-i18n-ph="org.notePh">
+            <button class="btn primary sm" type="submit"><svg class="ic"><use href="#i-plus"/></svg></button>
+          </form>
+          <div id="noteList" class="list"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- НАСТРОЙКИ -->
+    <section class="view" id="view-settings">
+      <header class="page-head"><h2 data-i18n="set.h">Настройки</h2><p data-i18n="set.p">Все ключи хранятся только на этом устройстве и отправляются только выбранному провайдеру.</p></header>
+
+      <div class="settings">
+        <div class="panel">
+          <h3 data-i18n="set.ai">Нейросеть</h3>
+          <label class="lbl" data-i18n="set.provider">Провайдер</label>
+          <select class="field" id="setProvider"></select>
+          <div class="hint"><a id="keyLink" href="#" target="_blank" rel="noopener">Где взять ключ</a></div>
+
+          <label class="lbl" data-i18n="set.apiKey">API-ключ</label>
+          <div class="row">
+            <input class="field" id="setKey" type="password" placeholder="Вставь ключ сюда" data-i18n-ph="set.keyPh" autocomplete="off" spellcheck="false">
+            <button class="btn ghost sm" type="button" id="btnEye" title="Показать ключ" data-i18n-title="set.showKey"><svg class="ic"><use href="#i-eye"/></svg></button>
+          </div>
+
+          <div class="hint" data-i18n="set.keysHint">Можна вставити кілька ключів через кому: коли в одного закінчиться ліміт, Кармис візьме наступний.</div>
+
+          <label class="lbl" data-i18n="set.model">Модель</label>
+          <div class="row">
+            <input class="field" id="setModel" list="modelList" spellcheck="false">
+            <datalist id="modelList"></datalist>
+            <button class="btn ghost sm" type="button" id="btnModels" data-i18n="set.list">Список</button>
+          </div>
+
+          <details class="more">
+            <summary data-i18n="set.advanced">Дополнительно: адрес API</summary>
+            <label class="lbl" data-i18n="set.base">Base URL</label>
+            <input class="field" id="setBase" placeholder="по умолчанию" spellcheck="false">
+            <div class="hint" data-i18n="set.baseHint">Для «Свой OpenAI-совместимый» укажи адрес вида https://…/v1</div>
+          </details>
+
+          <div class="row end">
+            <span class="hint" id="testResult"></span>
+          <pre class="diag" id="langResult" hidden></pre>
+            <button class="btn primary" type="button" id="btnTest" data-i18n="set.test">Проверить подключение</button>
+            <button class="btn ghost" type="button" id="btnLangCheck" data-i18n="set.langCheck">Проверить языки модели</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3 data-i18n="set.profile">Профиль</h3>
+          <label class="lbl" data-i18n="set.name">Как к тебе обращаться</label>
+          <input class="field" id="setName" placeholder="Например, Тони" data-i18n-ph="set.namePh">
+          <label class="lbl" data-i18n="set.city">Город по умолчанию (для погоды)</label>
+          <input class="field" id="setCity" placeholder="Например, Днепр" data-i18n-ph="set.cityPh">
+          <label class="lbl" data-i18n="set.lang">Язык</label>
+          <select class="field" id="setLang">
+            <option value="uk">Українська</option>
+            <option value="be">Беларуская</option>
+            <option value="ru">Русский</option>
+            <option value="en">English</option>
+          </select>
+          <label class="lbl" data-i18n="set.persona">Свои указания для Кармиса</label>
+          <textarea class="field" id="setPersona" rows="3" placeholder="Например: отвечай максимально коротко и немного саркастично" data-i18n-ph="set.personaPh"></textarea>
+        </div>
+
+        <div class="panel">
+          <h3 data-i18n="set.voice">Голос</h3>
+          <label class="check"><input type="checkbox" id="setTts"> <span data-i18n="set.tts">Озвучивать ответы</span></label>
+          <label class="lbl" data-i18n="set.ttsEngine">Движок озвучки</label>
+          <select class="field" id="setTtsEngine">
+            <option value="auto" data-i18n="set.ttsAuto">Авто (рекомендуется)</option>
+            <option value="native" data-i18n="set.ttsNative">Системный голос Android</option>
+            <option value="web" data-i18n="set.ttsWeb">Встроенный в браузер</option>
+            <option value="cloud" data-i18n="set.ttsCloud">Через нейросеть (ключ Gemini или OpenAI)</option>
+          </select>
+          <label class="lbl" data-i18n="set.ttsCloudSel">Какой нейросетью озвучивать</label>
+          <select class="field" id="setTtsCloud">
+            <option value="auto" data-i18n="set.auto">Авто</option>
+            <option value="gemini">Gemini</option>
+            <option value="openai">OpenAI</option>
+          </select>
+          <label class="lbl" data-i18n="set.voiceSel">Голос</label>
+          <select class="field" id="setVoice"></select>
+          <label class="lbl"><span data-i18n="set.rate">Скорость речи</span>: <span id="rateVal">1.0</span></label>
+          <input type="range" id="setRate" min="0.7" max="1.4" step="0.05">
+          <label class="lbl" data-i18n="set.stt">Распознавание речи</label>
+          <select class="field" id="setStt">
+            <option value="auto" data-i18n="set.sttAuto">Авто</option>
+            <option value="browser" data-i18n="set.sttBrowser">Встроенное в браузер</option>
+            <option value="groq" data-i18n="set.sttGroq">Groq Whisper (нужен ключ Groq)</option>
+            <option value="gemini" data-i18n="set.sttGemini">Gemini (нужен ключ Gemini)</option>
+          </select>
+          <div class="hint" data-i18n="set.sttHint">В приложениях для Windows и Android голос распознаётся через Groq или Gemini: сохрани ключ любого из них.</div>
+          <label class="check" style="margin-top:14px"><input type="checkbox" id="setListen"> <span data-i18n="set.listenCheck">Слушать постоянно</span></label>
+          <label class="check" style="margin-top:10px"><input type="checkbox" id="setFx" checked> <span data-i18n="set.fxCheck">Живой фон и анимации</span></label>
+          <label class="lbl" data-i18n="set.wake">Слово-активатор</label>
+          <input class="field" id="setWake" placeholder="джарвис" data-i18n-ph="set.wakePh" spellcheck="false" autocomplete="off">
+          <div class="hint" data-i18n="set.wakeHint"></div>
+          <div class="row end"><button class="btn ghost sm" type="button" id="btnTtsDiag" data-i18n="set.ttsDiag">Диагностика озвучки</button><button class="btn ghost sm" type="button" id="btnVoiceTest" data-i18n="set.voiceTest">Проверить голос</button></div>
+          <pre class="diag" id="ttsDiag" hidden></pre>
+        </div>
+
+        <div class="panel">
+          <label class="lbl" data-i18n="set.safetyTitle">Подтверждение действий</label>
+          <label class="check"><input type="checkbox" id="setNoConfirm"> <span data-i18n="set.noConfirmCheck">Действовать без подтверждения (в т.ч. необратимые действия, например удаление заметок)</span></label>
+          <div class="hint" data-i18n="set.noConfirmHint">По умолчанию ассистент спрашивает подтверждение перед необратимыми действиями (удалить заметки и т.п.) — это защита от случайной команды или ошибки распознавания речи. Если включить этот переключатель, такие действия будут выполняться сразу, без вопроса. Включайте осознанно.</div>
+        </div>
+
+        <div class="panel" id="pcPanel" hidden>
+          <h3 data-i18n="set.pcTitle">Керування ноутбуком</h3>
+          <label class="check"><input type="checkbox" id="setPcOn"> <span data-i18n="set.pcOn"></span></label>
+          <label class="lbl" data-i18n="set.pcMode">Підтвердження</label>
+          <select class="field" id="setPcMode">
+            <option value="task" data-i18n="set.pcModeTask"></option>
+            <option value="each" data-i18n="set.pcModeEach"></option>
+            <option value="auto" data-i18n="set.pcModeAuto"></option>
+          </select>
+          <label class="lbl" data-i18n="set.pcView">Як Кармис бачить екран</label>
+          <select class="field" id="setPcView">
+            <option value="auto" data-i18n="set.pcViewAuto"></option>
+            <option value="text" data-i18n="set.pcViewText"></option>
+            <option value="image" data-i18n="set.pcViewImage"></option>
+          </select>
+          <div class="hint" data-i18n="set.pcViewHint"></div>
+          <label class="lbl" data-i18n="set.pcProv">Модель для керування екраном</label>
+          <select class="field" id="setPcProv"></select>
+          <div class="hint" data-i18n="set.pcProvHint"></div>
+          <div class="hint" data-i18n="set.pcHint"></div>
+          <div class="row end"><button class="btn ghost sm" type="button" id="btnPcTest" data-i18n="set.pcTest">Перевірити</button></div>
+          <pre class="diag" id="pcTestOut" hidden></pre>
+        </div>
+
+        <div class="panel">
+          <h3 data-i18n="set.img">Картинки</h3>
+          <label class="lbl" data-i18n="set.imgProvider">Чем рисовать</label>
+          <select class="field" id="setImgProvider">
+            <option value="auto" data-i18n="set.imgAuto">Авто (по сохранённым ключам)</option>
+            <option value="gemini">Gemini</option>
+            <option value="openai">OpenAI</option>
+            <option value="openrouter">OpenRouter</option>
+            <option value="free">Pollinations (без ключа)</option>
+          </select>
+          <label class="lbl" data-i18n="set.imgModel">Модель (необязательно)</label>
+          <input class="field" id="setImgModel" placeholder="gemini-2.5-flash-image" spellcheck="false" autocomplete="off">
+          <label class="check" style="margin-top:14px"><input type="checkbox" id="setImgFree" checked> <span data-i18n="set.imgFree">Бесплатный запасной сервис Pollinations, если нет подходящего ключа</span></label>
+          <div class="hint" data-i18n="set.imgHint">Картинки рисуются теми же ключами, что и чат. Запасной сервис получает только текст описания.</div>
+        </div>
+
+        <div class="panel">
+          <h3 data-i18n="set.tg">Telegram (необязательно)</h3>
+          <div class="hint" data-i18n="set.tgHint"></div>
+          <label class="lbl" data-i18n="set.tgToken">Токен бота</label>
+          <input class="field" id="setTgToken" type="password" placeholder="123456:ABC…" autocomplete="off" spellcheck="false">
+          <label class="lbl">Chat ID</label>
+          <input class="field" id="setTgChat" placeholder="Например, 123456789" data-i18n-ph="set.tgChatPh" spellcheck="false">
+          <div class="row end"><button class="btn ghost sm" type="button" id="btnTgTest" data-i18n="set.tgTest">Отправить тест</button></div>
+        </div>
+
+        <div class="panel">
+          <h3 data-i18n="set.look">Внешний вид</h3>
+          <label class="lbl" data-i18n="set.accent">Акцентный цвет</label>
+          <div class="swatches" id="swatches"></div>
+          <label class="lbl" data-i18n="set.theme">Тема</label>
+          <select class="field" id="setTheme">
+            <option value="dark" data-i18n="set.dark">Тёмная</option>
+            <option value="light" data-i18n="set.light">Светлая</option>
+          </select>
+        </div>
+
+        <div class="panel" id="lookPanel">
+          <h3 data-i18n="ui.title">Фон и размеры</h3>
+          <div class="look-grid">
+            <div class="full">
+              <label class="lbl" data-i18n="ui.bg">Фон</label>
+              <select class="field" id="setBgMode">
+                <option value="default" data-i18n="ui.bgDefault">Стандартный</option>
+                <option value="grad" data-i18n="ui.bgGrad">Градиент</option>
+                <option value="color" data-i18n="ui.bgColor">Один цвет</option>
+                <option value="image" data-i18n="ui.bgImage">Моя картинка</option>
+              </select>
+            </div>
+            <div class="full" id="bgGradBox" hidden>
+              <label class="lbl" data-i18n="ui.presets">Готовые градиенты</label>
+              <div class="grads" id="bgGrads"></div>
+            </div>
+            <div class="full" id="bgColorBox" hidden>
+              <label class="lbl" data-i18n="ui.colors">Цвета</label>
+              <div class="colors"><input type="color" class="field" id="setC1"><input type="color" class="field" id="setC2"></div>
+            </div>
+            <div class="full" id="bgImgBox" hidden>
+              <div class="row wrap" style="margin-top:12px">
+                <button class="btn ghost sm" type="button" id="btnBgPick" data-i18n="ui.pick">Выбрать картинку…</button>
+                <button class="btn ghost sm" type="button" id="btnBgClear" data-i18n="ui.clearImg">Убрать картинку</button>
+                <input type="file" id="fileBg" accept="image/*" hidden>
+              </div>
+              <div class="bgprev" id="bgPrev" hidden></div>
+              <div class="hint" data-i18n="ui.imgHint">Картинка уменьшается и хранится только на этом устройстве.</div>
+            </div>
+            <div id="bgDimBox" class="full" hidden>
+              <div class="look-grid">
+                <div><label class="lbl" data-i18n="ui.dim">Затемнение фона</label><div class="rng"><input type="range" id="setDim" min="0" max="90" step="1"><output id="valDim"></output></div></div>
+                <div><label class="lbl" data-i18n="ui.blur">Размытие фона</label><div class="rng"><input type="range" id="setBlur" min="0" max="24" step="1"><output id="valBlur"></output></div></div>
+                <div class="full"><label class="lbl" data-i18n="ui.glass">Плотность панелей и пузырей</label><div class="rng"><input type="range" id="setGlass" min="10" max="100" step="1"><output id="valGlass"></output></div></div>
+              </div>
+            </div>
+            <div><label class="lbl" data-i18n="ui.fs">Размер текста</label><div class="rng"><input type="range" id="setFs" min="0.8" max="1.6" step="0.05"><output id="valFs"></output></div></div>
+            <div><label class="lbl" data-i18n="ui.w">Ширина чата</label><div class="rng"><input type="range" id="setW" min="480" max="1200" step="20"><output id="valW"></output></div></div>
+            <div><label class="lbl" data-i18n="ui.r">Скругление пузырей</label><div class="rng"><input type="range" id="setR" min="4" max="30" step="1"><output id="valR"></output></div></div>
+            <div><label class="lbl" data-i18n="ui.dens">Расстояние между сообщениями</label><div class="rng"><input type="range" id="setDens" min="0.4" max="2" step="0.1"><output id="valDens"></output></div></div>
+            <div><label class="lbl" data-i18n="ui.nav">Ширина меню (ПК)</label><div class="rng"><input type="range" id="setNav" min="160" max="320" step="4"><output id="valNav"></output></div></div>
+            <div>
+              <label class="lbl" data-i18n="ui.font">Шрифт</label>
+              <select class="field" id="setFont">
+                <option value="sys" data-i18n="ui.fontSys">Системный</option>
+                <option value="serif" data-i18n="ui.fontSerif">С засечками</option>
+                <option value="mono" data-i18n="ui.fontMono">Моноширинный</option>
+                <option value="round" data-i18n="ui.fontRound">Округлый</option>
+              </select>
+            </div>
+          </div>
+          <div class="row end"><button class="btn ghost sm" type="button" id="btnLookReset" data-i18n="ui.reset">Сбросить оформление</button></div>
+        </div>
+
+        <div class="panel">
+          <h3 data-i18n="set.support">Поддержка</h3>
+          <div class="hint" data-i18n="set.supportP">Есть вопрос или что-то не работает? Напиши в поддержку в Telegram:</div>
+          <div class="hint"><span data-i18n="id.label">Твой ID</span>: <b id="uidText" style="font-family:ui-monospace,Consolas,monospace;letter-spacing:.5px;user-select:all"></b></div>
+          <div class="hint" data-i18n="id.hint">Постоянный ID этой установки. Назови его в поддержке.</div>
+          <div class="row end"><button class="btn ghost sm" type="button" id="btnUidCopy" data-i18n="id.btn">Скопировать ID</button> <a class="btn ghost" id="btnSupport" href="https://t.me/KarmisaiBot" target="_blank" rel="noopener noreferrer">@KarmisaiBot</a></div>
+        </div>
+
+        <div class="panel danger">
+          <h3 data-i18n="set.data">Данные</h3>
+          <div class="hint" data-i18n="set.dataHint">Удалит ключи, настройки, заметки и историю на этом устройстве.</div>
+          <div class="row end"><button class="btn danger" type="button" id="btnWipe" data-i18n="set.wipe">Стереть всё</button></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<dialog id="dlg">
+  <form method="dialog">
+    <h3 id="dlgTitle"></h3>
+    <p id="dlgText"></p>
+    <div class="dlg-actions">
+      <button value="no" class="btn ghost" data-i18n="dlg.cancel">Отмена</button>
+      <button value="yes" class="btn primary" data-i18n="dlg.ok">Подтвердить</button>
+    </div>
+  </form>
+</dialog>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script src="i18n.js"></script>
+<script src="effects.js"></script>
+<script src="langguard.js"></script>
+<script src="tts.js"></script>
+<script src="imagegen.js"></script>
+<script src="app.js"></script>
+<script src="corner.js"></script>
+<script src="phone-bridge.js"></script>
+<script src="computer.js"></script>
+<script src="phone-texts.js"></script>
+<script src="mini-bridge.js"></script>
+<script src="identity.js"></script>
+</body>
+</html>

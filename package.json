@@ -1,0 +1,58 @@
+{
+  "name": "karmis-ai",
+  "version": "1.9.0",
+  "description": "Кармис AI — персональный ИИ-ассистент на ваших API-ключах (Windows и Android)",
+  "main": "electron/main.js",
+  "author": "Karmis",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "web": "npx --yes serve www",
+    "start": "electron .",
+    "build:win": "electron-builder --win nsis portable --publish never",
+    "android:add": "cap add android && node scripts/patch-android.js && cap sync android",
+    "android:sync": "cap sync android",
+    "android:open": "cap open android",
+    "test": "node test/screenfmt.test.js"
+  },
+  "devDependencies": {
+    "@capacitor/android": "^6.2.0",
+    "@capacitor/cli": "^6.2.0",
+    "@capacitor/core": "^6.2.0",
+    "electron": "^33.4.0",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "ai.karmis.app",
+    "productName": "Karmis AI",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "electron/**/*",
+      "www/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "perMachine": false,
+      "artifactName": "Karmis-AI-Setup.${ext}"
+    },
+    "portable": {
+      "artifactName": "Karmis-AI-Portable.${ext}"
+    }
+  },
+  "dependencies": {
+    "@capacitor-community/text-to-speech": "^5.0.0",
+    "@capacitor/filesystem": "^6.0.0",
+    "@capacitor/share": "^6.0.0"
+  }
+}

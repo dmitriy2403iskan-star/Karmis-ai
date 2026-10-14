@@ -1,0 +1,9 @@
+{
+  "appId": "ai.karmis.app",
+  "appName": "Кармис AI",
+  "webDir": "www",
+  "server": { "androidScheme": "https" },
+  "plugins": {
+    "CapacitorHttp": { "enabled": true }
+  }
+}
